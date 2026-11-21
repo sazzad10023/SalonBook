@@ -39,7 +39,7 @@ export default function Navbar() {
   const role = (user as typeof user & { role?: string })?.role;
 
   const dashboardPath =
-    role === "admin" ? "/admin/dashboard" : "/dashboard";
+    role === "admin" ? "/dashboard/admin" : "/dashboard/customer";
 
   const navLinks = user
     ? [

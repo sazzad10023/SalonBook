@@ -21,6 +21,10 @@ import {
   FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import {
+  NativeSelect,
+  NativeSelectOption,
+} from "@/components/ui/native-select";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
@@ -68,6 +72,7 @@ export default function SignupPage() {
       email: string;
       password: string;
       image: string;
+      role: "admin" | "customer";
     };
 
     try {
@@ -162,6 +167,26 @@ export default function SignupPage() {
                   placeholder="m@example.com"
                   required
                 />
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor="role">Account type</FieldLabel>
+                <NativeSelect
+                  id="role"
+                  name="role"
+                  defaultValue="customer"
+                  required
+                  className="w-full"
+                >
+                  <NativeSelectOption value="customer">
+                    Customer
+                  </NativeSelectOption>
+                  <NativeSelectOption value="admin">Admin</NativeSelectOption>
+                </NativeSelect>
+                <FieldDescription>
+                  Choose whether you are booking appointments or managing a
+                  salon. Google signups start as customers.
+                </FieldDescription>
               </Field>
 
               <Field>
