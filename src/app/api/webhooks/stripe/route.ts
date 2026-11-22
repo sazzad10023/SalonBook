@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 
-import { recordPaidCheckoutSession } from "@/lib/payments";
+import {
+  recordFailedCheckoutSession,
+  recordPaidCheckoutSession,
+} from "@/lib/payments";
 import { stripe } from "@/lib/stripe";
 
 export const runtime = "nodejs";
@@ -54,6 +57,17 @@ export async function POST(request: Request) {
 
         if (!result.recorded) {
           console.warn("Skipped Stripe session:", result.reason);
+        }
+
+        break;
+      }
+
+      case "checkout.session.expired":
+      case "checkout.session.async_payment_failed": {
+        const result = await recordFailedCheckoutSession(event.data.object);
+
+        if (!result.recorded) {
+          console.warn("Skipped failed Stripe session:", result.reason);
         }
 
         break;

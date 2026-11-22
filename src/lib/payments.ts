@@ -121,6 +121,36 @@ export async function getTransactionForSession(
   });
 }
 
+function getTransactionFields(
+  session: Stripe.Checkout.Session,
+  appointmentId: string,
+  status: "paid" | "failed"
+) {
+  const paymentIntent =
+    typeof session.payment_intent === "string"
+      ? session.payment_intent
+      : (session.payment_intent?.id ?? null);
+
+  return {
+    appointmentId,
+    stripeSessionId: session.id,
+    stripePaymentIntentId: paymentIntent,
+    amount: session.amount_total ?? 0,
+    currency: session.currency ?? "usd",
+    status,
+    paymentStatus: session.payment_status ?? "unpaid",
+    customerId: session.metadata?.customerId ?? null,
+    customerName: session.metadata?.customerName ?? null,
+    customerEmail:
+      session.customer_details?.email ??
+      session.customer_email ??
+      session.metadata?.customerEmail ??
+      null,
+    serviceId: session.metadata?.serviceId ?? null,
+    serviceName: session.metadata?.serviceName ?? null,
+  };
+}
+
 /**
  * Records a paid Checkout Session and marks its appointment as Paid.
  *
@@ -141,11 +171,6 @@ export async function recordPaidCheckoutSession(
     return { recorded: false, reason: "Session has no valid appointment." };
   }
 
-  const paymentIntent =
-    typeof session.payment_intent === "string"
-      ? session.payment_intent
-      : (session.payment_intent?.id ?? null);
-
   const now = new Date();
   const db = await getDb();
 
@@ -155,22 +180,7 @@ export async function recordPaidCheckoutSession(
       { stripeSessionId: session.id },
       {
         $set: {
-          appointmentId,
-          stripeSessionId: session.id,
-          stripePaymentIntentId: paymentIntent,
-          amount: session.amount_total ?? 0,
-          currency: session.currency ?? "usd",
-          status: session.status ?? null,
-          paymentStatus: session.payment_status,
-          customerId: session.metadata?.customerId ?? null,
-          customerName: session.metadata?.customerName ?? null,
-          customerEmail:
-            session.customer_details?.email ??
-            session.customer_email ??
-            session.metadata?.customerEmail ??
-            null,
-          serviceId: session.metadata?.serviceId ?? null,
-          serviceName: session.metadata?.serviceName ?? null,
+          ...getTransactionFields(session, appointmentId, "paid"),
           updatedAt: now,
         },
         $setOnInsert: { createdAt: now },
@@ -186,4 +196,45 @@ export async function recordPaidCheckoutSession(
     );
 
   return { recorded: true, appointmentId };
+}
+
+/**
+ * Records an expired or failed Checkout Session with status "failed".
+ * A session that was already recorded as paid is left untouched.
+ */
+export async function recordFailedCheckoutSession(
+  session: Stripe.Checkout.Session
+): Promise<{ recorded: boolean; appointmentId?: string; reason?: string }> {
+  if (session.mode !== "payment") {
+    return { recorded: false, reason: "Session is not a payment." };
+  }
+
+  const appointmentId =
+    session.metadata?.appointmentId ?? session.client_reference_id ?? null;
+
+  if (!appointmentId || !ObjectId.isValid(appointmentId)) {
+    return { recorded: false, reason: "Session has no valid appointment." };
+  }
+
+  const now = new Date();
+  const db = await getDb();
+
+  const result = await db
+    .collection<TransactionDocument>(TRANSACTIONS_COLLECTION)
+    .updateOne(
+      { stripeSessionId: session.id, status: { $ne: "paid" } },
+      {
+        $set: {
+          ...getTransactionFields(session, appointmentId, "failed"),
+          updatedAt: now,
+        },
+        $setOnInsert: { createdAt: now },
+      },
+      { upsert: true }
+    );
+
+  return {
+    recorded: result.upsertedCount > 0 || result.modifiedCount > 0,
+    appointmentId,
+  };
 }
