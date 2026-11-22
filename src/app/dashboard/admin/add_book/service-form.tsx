@@ -317,6 +317,7 @@ export function ServiceForm({ service = null }: ServiceFormProps) {
           </p>
         </div>
         <Button
+          nativeButton={false}
           variant="outline"
           render={<Link href="/dashboard/admin/services" />}
         >
@@ -546,6 +547,7 @@ export function ServiceForm({ service = null }: ServiceFormProps) {
 
           <CardFooter className="flex flex-wrap justify-end gap-2 border-t">
             <Button
+              nativeButton={false}
               type="button"
               variant="ghost"
               render={<Link href="/dashboard/admin/services" />}
