@@ -3,6 +3,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import {
   ArrowRight,
@@ -47,8 +48,15 @@ export function ServicesBrowser({
   services,
   isAuthenticated,
 }: ServicesBrowserProps) {
+  const searchParams = useSearchParams();
+  const requestedCategory = searchParams.get("category");
+  const initialCategory =
+    SERVICE_CATEGORIES.find(
+      (item) => item.toLowerCase() === requestedCategory?.toLowerCase()
+    ) ?? "all";
+
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("all");
+  const [category, setCategory] = useState<string>(initialCategory);
   const [sort, setSort] = useState<SortOption>("default");
 
   // Search, filter and sort services

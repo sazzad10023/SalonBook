@@ -1,4 +1,5 @@
 import Banner from "@/components/Banner";
+import SalonSections from "@/components/SalonSections";
 
 
 
@@ -7,6 +8,7 @@ export default function Home() {
     <div >
       
      <Banner></Banner>
+      <SalonSections />
   
     </div>
   );

@@ -58,7 +58,8 @@ Single Next.js 16 app at repo root; use npm (`package-lock.json`). App Router in
 
 ## Routes
 
-- Implemented pages: `/`, `/services`, `/services/[id]`, `/signin`, `/signup`, `/dashboard/admin`, `/dashboard/admin/overview`, `/dashboard/admin/add_book`, `/dashboard/admin/services`, `/dashboard/admin/appointments`, `/dashboard/admin/customers`, `/dashboard/admin/profile`, `/dashboard/customer`, `/dashboard/customer/overview`, `/dashboard/customer/appointments`, `/dashboard/customer/appointments/[id]/payment`, `/dashboard/customer/profile`.
+- Implemented pages: `/`, `/services`, `/services/[id]`, `/browser`, `/signin`, `/signup`, `/dashboard/admin`, `/dashboard/admin/overview`, `/dashboard/admin/add_book`, `/dashboard/admin/services`, `/dashboard/admin/appointments`, `/dashboard/admin/customers`, `/dashboard/admin/profile`, `/dashboard/customer`, `/dashboard/customer/overview`, `/dashboard/customer/appointments`, `/dashboard/customer/appointments/[id]/payment`, `/dashboard/customer/profile`.
+- `/browser` is a one-line re-export alias of `/services` (kept because home-page links use it). `ServicesBrowser` reads `?category=<display name>` via `useSearchParams()` to pre-select the filter; the route is dynamic (`connection()`), so no Suspense boundary is needed.
 - Role entry routes are one-line re-export shims: `/dashboard/admin` → `./overview/page`, `/dashboard/customer` → `./overview/page`, and both role profile routes → `@/app/dashboard/profile/page`. Edit the target, not the shim.
 - `src/app/components/DashboardSidebar.tsx` picks its menu from the URL prefix (`/dashboard/admin/*` → admin, else customer), not from session role. Some sidebar links (e.g. `transactions`) still have no page.
 - Navbar sends admins to `/dashboard/admin` and everyone else to `/dashboard/customer`.
