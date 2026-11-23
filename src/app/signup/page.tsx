@@ -21,10 +21,6 @@ import {
   FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import {
-  NativeSelect,
-  NativeSelectOption,
-} from "@/components/ui/native-select";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
@@ -66,20 +62,38 @@ export default function SignupPage() {
     }
 
     const formData = new FormData(event.currentTarget);
+    const imageFile = formData.get("image");
 
-    const user = Object.fromEntries(formData.entries()) as {
-      name: string;
-      email: string;
-      password: string;
-      image: string;
-      role: "admin" | "customer";
-    };
+    if (!(imageFile instanceof File) || imageFile.size === 0) {
+      toast.error("Please choose a profile image.");
+      return;
+    }
 
     try {
       setIsLoading(true);
 
+      const uploadBody = new FormData();
+      uploadBody.append("image", imageFile);
+
+      const uploadResponse = await fetch("/api/upload-image", {
+        method: "POST",
+        body: uploadBody,
+      });
+      const uploadResult = (await uploadResponse.json().catch(() => null)) as
+        | { url?: string; error?: string }
+        | null;
+
+      if (!uploadResponse.ok || !uploadResult?.url) {
+        toast.error(uploadResult?.error || "Could not upload your image.");
+        return;
+      }
+
       const { data, error } = await authClient.signUp.email({
-        ...user,
+        name: String(formData.get("name") ?? ""),
+        email: String(formData.get("email") ?? ""),
+        password,
+        image: uploadResult.url,
+        role: "customer",
       });
 
       if (error) {
@@ -170,34 +184,17 @@ export default function SignupPage() {
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="role">Account type</FieldLabel>
-                <NativeSelect
-                  id="role"
-                  name="role"
-                  defaultValue="customer"
-                  required
-                  className="w-full"
-                >
-                  <NativeSelectOption value="customer">
-                    Customer
-                  </NativeSelectOption>
-                  <NativeSelectOption value="admin">Admin</NativeSelectOption>
-                </NativeSelect>
-                <FieldDescription>
-                  Choose whether you are booking appointments or managing a
-                  salon. Google signups start as customers.
-                </FieldDescription>
-              </Field>
-
-              <Field>
-                <FieldLabel htmlFor="image-url">Image URL</FieldLabel>
+                <FieldLabel htmlFor="image">Profile image</FieldLabel>
                 <Input
                   id="image"
-                  type="url"
+                  type="file"
                   name="image"
-                  placeholder="https://example.com/image.jpg"
+                  accept="image/*"
                   required
                 />
+                <FieldDescription>
+                  Upload a photo for your profile.
+                </FieldDescription>
               </Field>
 
               <Field>

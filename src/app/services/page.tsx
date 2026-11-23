@@ -11,8 +11,8 @@ import {
   type ServiceDocument,
 } from "@/lib/services";
 import { ServicesBrowser } from "./services-browser";
-
-
+import { authFetch, getSession } from "@/lib/core/server";
+import { getServices } from "../lib/api/books";
 
 export const metadata: Metadata = {
   title: "Browse services | SalonBook",
@@ -27,7 +27,10 @@ export default async function BrowseServicesPage() {
   const session = await auth.api.getSession({
     headers: requestHeaders,
   });
-
+   getServices();
+//  console.log( "session", session)
+  // const response = await authFetch ("http://localhost:8000/services")
+  // console.log(response)
   const documents = await (await getDb())
     .collection<ServiceDocument>(SERVICES_COLLECTION)
     .find({ status: "active" })
@@ -43,7 +46,7 @@ export default async function BrowseServicesPage() {
     duration: service.duration,
     image: service.image,
   }));
-
+  
   return (
     <div className="min-h-screen bg-[#fbfcf8]">
       <main className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-12">

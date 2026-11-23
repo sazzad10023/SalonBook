@@ -9,8 +9,8 @@ export type { ServiceInput, ServiceStatus } from "@/lib/services";
 
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"
-const API = {SERVICES: `${BASE_URL}/services`,
-};
+
+
 
 export type Service = ServiceInput & {
   id: string;
@@ -50,7 +50,10 @@ type ServiceApiResponse =
   | { data: ServiceApiDocument[] };
 
 export async function getServices(): Promise<Service[]> {
-  const response = await authFetch(API.SERVICES, { cache: "no-store" });
+   
+  const api = `${BASE_URL}/services`
+  const response = await authFetch(api);
+  // const response = await fetch(`${BASE_URL}/services`)
 
   const data = await parseResponse<ServiceApiResponse>(response);
 
