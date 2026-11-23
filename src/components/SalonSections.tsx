@@ -3,11 +3,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import {
   ArrowRight,
   Brush,
-  Clock,
   Droplets,
   Feather,
   Flower2,
@@ -17,10 +15,7 @@ import {
   Scissors,
   type LucideIcon,
 } from "lucide-react";
-import {
-  getHomeServices,
-  type SalonService,
-} from "@/app/lib/api/home";
+import { getHomeServices } from "@/app/lib/api/home";
 
 type Category = {
   name: string;
@@ -90,14 +85,12 @@ const categories: Category[] = [
 ];
 
 export default function SalonSections() {
-  const [services, setServices] = useState<SalonService[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadServices() {
       try {
-        const data = await getHomeServices();
-        setServices(data);
+        await getHomeServices();
       } catch (error) {
         console.error("Failed to load services:", error);
       } finally {
@@ -107,14 +100,6 @@ export default function SalonSections() {
 
     loadServices();
   }, []);
-
-  const activeServices = services.filter(
-    (service) => service.status?.toLowerCase() === "active"
-  );
-
-  const featuredServices = activeServices
-    .filter((service) => service.isFeatured)
-    .slice(0, 4);
 
   return (
     <div className="space-y-20 py-16">

@@ -1,9 +1,17 @@
+'use server'
+import { authFetch } from "@/lib/core/server";
+
 import type { ServiceInput } from "@/lib/services";
 
 export type { ServiceInput, ServiceStatus } from "@/lib/services";
  
 
+
+
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"
+const API = {SERVICES: `${BASE_URL}/services`,
+};
+
 export type Service = ServiceInput & {
   id: string;
   createdBy?: string;
@@ -42,7 +50,8 @@ type ServiceApiResponse =
   | { data: ServiceApiDocument[] };
 
 export async function getServices(): Promise<Service[]> {
-  const response = await fetch(`${BASE_URL}/services`, { cache: "no-store" });
+  const response = await authFetch(API.SERVICES, { cache: "no-store" });
+
   const data = await parseResponse<ServiceApiResponse>(response);
 
   const services = Array.isArray(data)
@@ -56,7 +65,6 @@ export async function getServices(): Promise<Service[]> {
     id: id ?? _id ?? "",
   }));
 }
-
 export async function updateService(
   id: string,
   data: Partial<ServiceInput>
