@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/footer";
+import { LoadingProvider } from "./loading-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,7 +29,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <Navbar></Navbar>
+        <LoadingProvider>
         {children}
+        </LoadingProvider>
         <Footer></Footer>
         <Toaster position="top-right" richColors />
       </body>

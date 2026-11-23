@@ -93,10 +93,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-12 lg:py-16">
           {/* Brand */}
           <div>
-            <Link
-              href="/"
-              className="group inline-flex items-center gap-2"
-            >
+            <Link href="/" className="group inline-flex items-center gap-2">
               <span className="flex size-9 items-center justify-center rounded-sm bg-primary text-primary-foreground">
                 <Scissors size={19} />
               </span>
@@ -136,7 +133,7 @@ export default function Footer() {
 
             <ul className="mt-5 space-y-3">
               {navigationLinks.map((link) => (
-                <li key={link.href}>
+                <li key={link.label}>
                   <Link
                     href={link.href}
                     className="group inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-primary"
@@ -160,26 +157,17 @@ export default function Footer() {
 
             <ul className="mt-5 space-y-4">
               <li className="flex items-start gap-3 text-sm text-muted-foreground">
-                <Phone
-                  size={17}
-                  className="mt-0.5 shrink-0 text-primary"
-                />
+                <Phone size={17} className="mt-0.5 shrink-0 text-primary" />
                 <span>+880 1634845501</span>
               </li>
 
               <li className="flex items-start gap-3 text-sm text-muted-foreground">
-                <Mail
-                  size={17}
-                  className="mt-0.5 shrink-0 text-primary"
-                />
+                <Mail size={17} className="mt-0.5 shrink-0 text-primary" />
                 <span>support@salonbook.com</span>
               </li>
 
               <li className="flex items-start gap-3 text-sm text-muted-foreground">
-                <MapPin
-                  size={17}
-                  className="mt-0.5 shrink-0 text-primary"
-                />
+                <MapPin size={17} className="mt-0.5 shrink-0 text-primary" />
                 <span>Dhaka, Bangladesh</span>
               </li>
             </ul>
@@ -193,10 +181,7 @@ export default function Footer() {
 
             <ul className="mt-5 space-y-4 text-sm">
               <li className="flex items-start gap-3">
-                <Clock
-                  size={17}
-                  className="mt-0.5 shrink-0 text-primary"
-                />
+                <Clock size={17} className="mt-0.5 shrink-0 text-primary" />
 
                 <div className="space-y-1">
                   <p className="font-medium">Saturday – Thursday</p>
@@ -230,7 +215,7 @@ export default function Footer() {
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
             {legalLinks.map((link) => (
               <Link
-                key={link.href}
+                key={link.label}
                 href={link.href}
                 className="text-xs text-muted-foreground transition-colors hover:text-primary"
               >
