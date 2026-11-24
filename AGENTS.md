@@ -57,16 +57,16 @@ pnpm install
 
 ```bash
 cd <SERVER_PROJECT_FOLDER>
-pnpm install
-pnpm run dev
+npm install
+npm run dev
 ```
 
 ### Start the Client
 
 ```bash
 cd <CLIENT_PROJECT_FOLDER>
-pnpm install
-pnpm run dev
+npm install
+npm run dev
 ```
 
 Open the following URL in your browser:
@@ -99,9 +99,8 @@ CLIENT_URL=
 
 ## Live Website
 
-- Live Website: <LIVE_WEBSITE_URL>
-
+- Live Website: https://salon-book-phi.vercel.app
 ## Repository Links
 
-- Client Repository: <CLIENT_REPOSITORY_URL>
-- Server Repository: <SERVER_REPOSITORY_URL>
+- Client Repository: https://github.com/sazzad10023/SalonBook
+- Server Repository: https://github.com/sazzad10023/Salon-server
