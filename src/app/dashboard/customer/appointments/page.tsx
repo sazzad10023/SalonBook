@@ -7,9 +7,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   getMyAppointmentsWithServices,
+  cancelCustomerAppointment,
   type Appointment,
 } from "@/app/lib/appointments";
 import { useSession } from "@/lib/auth-client";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   CalendarDays,
@@ -17,6 +19,7 @@ import {
   CreditCard,
   Eye,
   Loader2,
+  X,
 } from "lucide-react";
 
 export default function MyAppointmentsPage() {
@@ -25,6 +28,7 @@ export default function MyAppointmentsPage() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
 
   const userId = session?.user.id;
   const userEmail =
@@ -87,6 +91,36 @@ export default function MyAppointmentsPage() {
     });
   };
 
+  const handleCancel = async (id: string) => {
+    if (!window.confirm("Are you sure you want to cancel this appointment?")) {
+      return;
+    }
+
+    try {
+      setCancellingId(id);
+      await cancelCustomerAppointment(id);
+
+      setAppointments((prev) =>
+        prev.map((appointment) =>
+          appointment._id === id
+            ? { ...appointment, status: "Cancelled" }
+            : appointment
+        )
+      );
+
+      toast.success("Your appointment request has been cancelled.");
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to cancel appointment."
+      );
+    } finally {
+      setCancellingId(null);
+    }
+  };
+
   const formatRequestedDate = (date: string) => {
     return new Date(date).toLocaleDateString("en-US", {
       month: "short",
@@ -143,7 +177,7 @@ export default function MyAppointmentsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4 md:p-6">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
@@ -202,7 +236,7 @@ export default function MyAppointmentsPage() {
               className="rounded-sm border border-[#e9e9e2] bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
             >
               {/* Main Card */}
-              <div className="grid items-center gap-4 md:grid-cols-[minmax(190px,1.5fr)_minmax(160px,1fr)_90px_110px_100px]">
+              <div className="grid items-start gap-4 md:grid-cols-[minmax(190px,1.5fr)_minmax(160px,1fr)_90px_110px_100px]">
                 {/* Service Image & Name */}
                 <div className="flex min-w-0 items-center gap-3">
                   <div className="h-14 w-14 shrink-0 overflow-hidden rounded-sm bg-[#eaf0e7]">
@@ -335,6 +369,23 @@ export default function MyAppointmentsPage() {
                         Pay Now
                       </Button>
                     )}
+
+                  {appointment.status === "Pending" && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={cancellingId === appointment._id}
+                      className="h-8 rounded-sm border-red-200 text-xs text-red-600 hover:bg-red-50"
+                      onClick={() => handleCancel(appointment._id)}
+                    >
+                      {cancellingId === appointment._id ? (
+                        <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <X className="mr-1.5 h-3.5 w-3.5" />
+                      )}
+                      Cancel
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>

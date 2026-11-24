@@ -1,3 +1,5 @@
+
+"use server";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -42,15 +44,19 @@ export const getToken = async () => {
   return jwtToken.token;
 };
 
-export const authFetch = async (api: string) => {
+export const authFetch = async (api: string, init: RequestInit = {}) => {
   const token = await getToken();
+  const requestHeaders = new Headers(init.headers);
+
+  if (!requestHeaders.has("Content-Type")) {
+    requestHeaders.set("Content-Type", "application/json");
+  }
+  requestHeaders.set("Authorization", `Bearer ${token}`);
 
   const res = await fetch(api, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization:`Bearer ${token}`,
-    },
-    cache: "no-store",
+    ...init,
+    headers: requestHeaders,
+    cache: init.cache ?? "no-store",
   });
 
   if (res.status === 401 || res.status === 403) {

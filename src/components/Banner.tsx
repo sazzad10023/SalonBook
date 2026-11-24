@@ -35,7 +35,7 @@ const Banner = () => {
           </div>
 
           {/* Heading */}
-          <h1 className="font-serif text-4xl leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">
+          <h1 className="font-serif text-3xl leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">
             Beauty begins,
             <span className="block italic text-[#c2d2b8]">
               with you.

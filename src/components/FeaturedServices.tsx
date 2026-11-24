@@ -39,7 +39,7 @@ useEffect(() => {
   return (
     <section className="mx-auto max-w-7xl px-4 py-16">
       {/* Header */}
-      <div className="mb-8 flex items-end justify-between">
+      <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="mb-2 text-sm font-medium uppercase tracking-widest text-primary">
             Our Recommendations
@@ -64,7 +64,7 @@ useEffect(() => {
 
       {/* Loading */}
       {loading && (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
           {Array.from({ length: 6 }).map((_, index) => (
             <div
               key={index}
@@ -90,7 +90,7 @@ useEffect(() => {
 
       {/* Services */}
       {!loading && !error && services.length > 0 && (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
           {services.map((service) => (
             <article
               key={service._id}
@@ -115,7 +115,7 @@ useEffect(() => {
               </div>
 
               {/* Content */}
-              <div className="space-y-3 p-3 md:p-4">
+              <div className="space-y-3 p-4 sm:p-5">
                 <div>
                   <p className="text-xs font-medium text-primary">
                     {service.category}

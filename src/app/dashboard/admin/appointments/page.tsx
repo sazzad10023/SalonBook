@@ -63,9 +63,6 @@ export default function ManageAppointmentsPage() {
       setRefreshing(false);
     }
   }, [applyAppointments, handleFetchError]);
-
-  // State updates happen in the promise callbacks, not synchronously in the
-  // effect body, so this is a normal external-data subscription.
   useEffect(() => {
     let active = true;
 
@@ -226,7 +223,7 @@ export default function ManageAppointmentsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4 md:p-6">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
@@ -255,7 +252,7 @@ export default function ManageAppointmentsPage() {
       </div>
 
       {/* Statistics */}
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {[
           {
             label: "Total Appointments",
@@ -484,14 +481,14 @@ export default function ManageAppointmentsPage() {
       {/* Appointment Details Dialog */}
       {selectedAppointment && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-0 sm:items-center sm:p-4"
           onClick={() => setSelectedAppointment(null)}
         >
           <div
             role="dialog"
             aria-modal="true"
             aria-labelledby="appointment-details-title"
-            className="max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-sm bg-white p-5 shadow-xl"
+            className="max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-t-xl bg-white p-5 shadow-xl sm:rounded-sm"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b pb-3">

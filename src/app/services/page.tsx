@@ -57,7 +57,7 @@ export default async function BrowseServicesPage() {
             Available now
           </p>
 
-          <h1 className="font-serif text-4xl leading-tight text-[#263d32] sm:text-5xl">
+          <h1 className="font-serif text-3xl leading-tight text-[#263d32] sm:text-4xl sm:leading-tight lg:text-5xl">
             Browse our services
           </h1>
 

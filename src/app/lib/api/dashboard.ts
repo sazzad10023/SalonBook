@@ -1,3 +1,5 @@
+"use server";
+import { authFetch } from "@/lib/core/server";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
@@ -21,8 +23,8 @@ interface DashboardResponse {
 }
 
 export async function getDashboardStats(): Promise<DashboardStats> {
-  const response = await fetch(
-    `${BASE_URL}/api/admin/dashboard/stats`,
+  const response = await authFetch(
+    `${BASE_URL}/admin/dashboard`,
     {
       method: "GET",
       cache: "no-store",

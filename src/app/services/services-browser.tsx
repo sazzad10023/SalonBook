@@ -105,7 +105,7 @@ export function ServicesBrowser({
   return (
     <div>
       {/* Search and Filters */}
-      <div className="mb-8 rounded-sm border border-[#e3e9df] bg-white p-4 sm:p-5">
+      <div className="mb-8 rounded-sm border border-[#e3e9df] bg-white p-3 sm:p-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
 
           {/* Search */}
@@ -146,8 +146,7 @@ export function ServicesBrowser({
               onChange={(event) => setCategory(event.target.value)}
               className="h-11 w-full rounded-sm border border-[#e3e9df] bg-white px-3 text-sm text-[#355747] outline-none focus:border-[#82977a]"
               aria-label="Filter by category"
-            >
-              <option value="all">All Categories</option>
+            >              <option value="all">All Categories</option>
 
               {SERVICE_CATEGORIES.map((item) => (
                 <option key={item} value={item}>
@@ -226,7 +225,7 @@ export function ServicesBrowser({
           </Button>
         </div>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {filteredServices.map((service) => (
             <article
               key={service.id}

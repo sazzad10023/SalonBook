@@ -114,7 +114,7 @@ export function DashboardSidebar() {
 
     return (
         // <div className="py-10">
-        <Sidebar className="top-16 h-[calc(100svh-4rem)]">
+        <Sidebar className="top-16 !h-[calc(100svh-4rem)]">
             <SidebarHeader />
             <SidebarContent>
                 <SidebarGroup />

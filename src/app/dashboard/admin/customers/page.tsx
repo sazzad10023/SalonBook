@@ -157,7 +157,7 @@ export default function ManageUsersPage() {
     ];
 
     return (
-        <div className="min-h-screen space-y-6 pb-10">
+        <div className="min-h-screen space-y-6 p-4 pb-10 md:p-6">
             {/* Header */}
             <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
@@ -191,7 +191,7 @@ export default function ManageUsersPage() {
             </div>
 
             {/* Statistics */}
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {statCards.map((stat) => {
                     const Icon = stat.icon;
 

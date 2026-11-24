@@ -87,14 +87,19 @@ const socialLinks = [
 
 export default function Footer() {
   return (
-    <footer className="border-t bg-background">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <footer className="w-full min-w-0 border-t bg-background">
+      <div className="mx-auto w-full max-w-7xl min-w-0 px-4 sm:px-6 lg:px-8">
+
         {/* Main Footer */}
-        <div className="grid grid-cols-1 gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-12 lg:py-16">
+        <div className="grid min-w-0 grid-cols-1 gap-10 py-10 sm:grid-cols-2 sm:gap-x-8 lg:grid-cols-4 lg:gap-10 lg:py-14">
+
           {/* Brand */}
-          <div>
-            <Link href="/" className="group inline-flex items-center gap-2">
-              <span className="flex size-9 items-center justify-center rounded-sm bg-primary text-primary-foreground">
+          <div className="min-w-0">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2"
+            >
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-sm bg-primary text-primary-foreground">
                 <Scissors size={19} />
               </span>
 
@@ -103,13 +108,12 @@ export default function Footer() {
               </span>
             </Link>
 
-            <p className="mt-5 max-w-xs text-sm leading-7 text-muted-foreground">
+            <p className="mt-4 max-w-xs text-sm leading-7 text-muted-foreground">
               Your beauty, our priority. Discover professional salon
               services and book your next appointment with ease.
             </p>
 
-            {/* Social Links */}
-            <div className="mt-6 flex items-center gap-2">
+            <div className="mt-5 flex items-center gap-2">
               {socialLinks.map(({ icon: Icon, href, label }) => (
                 <Link
                   key={label}
@@ -117,7 +121,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="flex size-9 items-center justify-center rounded-sm border bg-background text-muted-foreground transition-all duration-200 hover:border-primary hover:bg-primary hover:text-primary-foreground"
+                  className="flex size-9 shrink-0 items-center justify-center rounded-sm border bg-background text-muted-foreground transition-colors hover:border-primary hover:bg-primary hover:text-primary-foreground"
                 >
                   <Icon size={17} />
                 </Link>
@@ -126,7 +130,7 @@ export default function Footer() {
           </div>
 
           {/* Quick Links */}
-          <div>
+          <div className="min-w-0">
             <h3 className="text-sm font-semibold tracking-wide">
               Quick Links
             </h3>
@@ -150,20 +154,27 @@ export default function Footer() {
           </div>
 
           {/* Contact */}
-          <div>
+          <div className="min-w-0">
             <h3 className="text-sm font-semibold tracking-wide">
               Get in Touch
             </h3>
 
             <ul className="mt-5 space-y-4">
-              <li className="flex items-start gap-3 text-sm text-muted-foreground">
+              <li className="flex min-w-0 items-start gap-3 text-sm text-muted-foreground">
                 <Phone size={17} className="mt-0.5 shrink-0 text-primary" />
-                <span>+880 1634845501</span>
+                <a href="tel:+8801634845501" className="break-all hover:text-primary">
+                  +880 1634845501
+                </a>
               </li>
 
-              <li className="flex items-start gap-3 text-sm text-muted-foreground">
+              <li className="flex min-w-0 items-start gap-3 text-sm text-muted-foreground">
                 <Mail size={17} className="mt-0.5 shrink-0 text-primary" />
-                <span>support@salonbook.com</span>
+                <a
+                  href="mailto:support@salonbook.com"
+                  className="break-all hover:text-primary"
+                >
+                  support@salonbook.com
+                </a>
               </li>
 
               <li className="flex items-start gap-3 text-sm text-muted-foreground">
@@ -174,7 +185,7 @@ export default function Footer() {
           </div>
 
           {/* Opening Hours */}
-          <div>
+          <div className="min-w-0">
             <h3 className="text-sm font-semibold tracking-wide">
               Opening Hours
             </h3>
@@ -183,7 +194,7 @@ export default function Footer() {
               <li className="flex items-start gap-3">
                 <Clock size={17} className="mt-0.5 shrink-0 text-primary" />
 
-                <div className="space-y-1">
+                <div className="min-w-0 space-y-1">
                   <p className="font-medium">Saturday – Thursday</p>
                   <p className="text-muted-foreground">
                     10:00 AM – 09:00 PM
@@ -207,7 +218,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Footer */}
-        <div className="flex flex-col gap-5 border-t py-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 flex-col gap-4 border-t py-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-center text-xs text-muted-foreground sm:text-left">
             © {new Date().getFullYear()} SalonBook. All rights reserved.
           </p>

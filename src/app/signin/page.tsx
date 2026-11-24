@@ -79,7 +79,8 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="flex flex-col gap-6 max-w-6xl mx-auto my-16 ">
+    <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center px-4 py-10">
+    <div className="flex w-full max-w-sm flex-col gap-6">
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Create an account</CardTitle>
@@ -149,6 +150,7 @@ export default function SignInPage() {
         By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
         and <a href="#">Privacy Policy</a>.
       </FieldDescription>
+    </div>
     </div>
   );
 }

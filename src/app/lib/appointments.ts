@@ -1,3 +1,4 @@
+import { authFetch } from "@/lib/core/server";
 import { getServices, type Service } from "./api/books";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"
@@ -90,6 +91,7 @@ export const getMyAppointments = async (): Promise<AppointmentsResponse> => {
   return result;
 };
 
+
 async function loadServices(): Promise<Service[]> {
   return getServices().catch((error) => {
     console.error("Failed to load services for appointments", error);
@@ -164,3 +166,186 @@ export const confirmAppointment = (id: string) =>
 
 export const cancelAdminAppointment = (id: string) =>
   updateAppointmentStatus(id, "Cancelled");
+
+// Customer self-service cancel (same endpoint as admin cancel; the UI only
+// offers it while status is "Pending").
+export const cancelCustomerAppointment = (id: string) =>
+  updateAppointmentStatus(id, "Cancelled");
+
+// "use server";
+// import { authFetch } from "@/lib/core/server";
+// import { getServices, type Service } from "./api/books";
+
+// const BASE_URL =
+//   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+
+// export type AppointmentCustomer = {
+//   id?: string;
+//   name?: string;
+//   email?: string;
+//   phone?: string;
+//   image?: string | null;
+// };
+
+// export type Appointment = {
+//   _id: string;
+//   serviceId: string;
+//   appointmentDate: string;
+//   timeSlot: string;
+//   message: string;
+//   status: string;
+//   paymentStatus: string;
+//   createdAt: string;
+//   updatedAt: string;
+//   service?: Service | null;
+//   customer?: AppointmentCustomer | null;
+// };
+
+// type AppointmentRecord = Omit<Appointment, "service">;
+
+// type AppointmentsResponse = {
+//   success?: boolean;
+//   message?: string;
+//   data?: AppointmentRecord[];
+// };
+
+// // Create Appointment
+// export async function createAppointment(data: {
+//   serviceId: string;
+//   appointmentDate: string;
+//   timeSlot: string;
+//   message: string;
+//   customer?: AppointmentCustomer;
+// }) {
+//   const response = await authFetch(`${BASE_URL}/appointments`, {
+//     method: "POST",
+//     body: JSON.stringify(data),
+//   });
+
+//   const responseText = await response.text();
+
+//   let result;
+
+//   try {
+//     result = JSON.parse(responseText);
+//   } catch {
+//     throw new Error(
+//       `API returned HTML or invalid JSON. HTTP Status: ${response.status}`
+//     );
+//   }
+
+//   if (!response.ok) {
+//     throw new Error(
+//       result.message || result.error || "Booking request failed."
+//     );
+//   }
+
+//   return result;
+// }
+
+// // Get My Appointments
+// export const getMyAppointments =
+//   async (): Promise<AppointmentsResponse> => {
+//     const response = await authFetch(`${BASE_URL}/appointments`, {
+//       method: "GET",
+//     });
+
+//     const result = (await response.json()) as AppointmentsResponse;
+
+//     if (!response.ok) {
+//       throw new Error(
+//         result.message || "Failed to fetch appointments."
+//       );
+//     }
+
+//     return result;
+//   };
+
+// // Load Services
+// async function loadServices(): Promise<Service[]> {
+//   return getServices().catch((error) => {
+//     console.error(
+//       "Failed to load services for appointments",
+//       error
+//     );
+//     return [];
+//   });
+// }
+
+// // Attach Service Details
+// function attachServices(
+//   appointments: AppointmentRecord[],
+//   services: Service[]
+// ): Appointment[] {
+//   const servicesById = new Map(
+//     services.map((service) => [service.id, service])
+//   );
+
+//   return appointments.map((appointment) => ({
+//     ...appointment,
+//     service: servicesById.get(appointment.serviceId) ?? null,
+//   }));
+// }
+
+// // Get My Appointments With Services
+// export async function getMyAppointmentsWithServices(): Promise<
+//   Appointment[]
+// > {
+//   const [result, services] = await Promise.all([
+//     getMyAppointments(),
+//     loadServices(),
+//   ]);
+
+//   return attachServices(result.data ?? [], services);
+// }
+
+// // Admin: Get All Appointments
+// export const getAllAppointments =
+//   async (): Promise<Appointment[]> => {
+//     const [result, services] = await Promise.all([
+//       getMyAppointments(),
+//       loadServices(),
+//     ]);
+
+//     return attachServices(result.data ?? [], services);
+//   };
+
+// // Update Appointment Status
+// const updateAppointmentStatus = async (
+//   id: string,
+//   status: "Confirmed" | "Cancelled"
+// ) => {
+//   const response = await authFetch(
+//     `${BASE_URL}/appointments/${id}`,
+//     {
+//       method: "PATCH",
+//       body: JSON.stringify({ status }),
+//     }
+//   );
+
+//   const result = (await response.json().catch(() => null)) as {
+//     message?: string;
+//   } | null;
+
+//   if (!response.ok) {
+//     throw new Error(
+//       result?.message ||
+//         (status === "Confirmed"
+//           ? "Failed to confirm appointment."
+//           : "Failed to cancel appointment.")
+//     );
+//   }
+
+//   return result;
+// };
+
+// // Admin: Confirm Appointment
+// // Admin: Confirm Appointment
+// export async function confirmAppointment(id: string) {
+//   return updateAppointmentStatus(id, "Confirmed");
+// }
+
+// // Admin: Cancel Appointment
+// export async function cancelAdminAppointment(id: string) {
+//   return updateAppointmentStatus(id, "Cancelled");
+

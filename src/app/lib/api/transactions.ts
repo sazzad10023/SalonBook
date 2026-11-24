@@ -1,3 +1,5 @@
+"use server";
+import { authFetch } from "@/lib/core/server";
 
 export interface Transaction {
   _id: string;
@@ -19,7 +21,7 @@ export interface Transaction {
 const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export async function getTransactions(): Promise<Transaction[]> {
-  const response = await fetch(`${API_URL}/transactions`, {
+  const response = await authFetch(`${API_URL}/transactions`, {
     cache: "no-store",
   });
 

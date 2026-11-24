@@ -1,8 +1,12 @@
+"use server"
+import { authFetch } from "@/lib/core/server";
+
 const BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
 export async function getCustomerDashboardStats() {
-  const response = await fetch(`${BASE_URL}/customer-stats`, {
+
+  const response = await authFetch(`${BASE_URL}/customer-stats`, {
     method: "GET",
     cache: "no-store",
   });

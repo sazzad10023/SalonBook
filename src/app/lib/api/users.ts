@@ -1,3 +1,5 @@
+"use server";
+import { authFetch } from "@/lib/core/server";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
@@ -16,7 +18,7 @@ export interface User {
 }
 
 export async function getUsers(): Promise<User[]> {
-  const response = await fetch(`${BASE_URL}/users`, {
+  const response = await authFetch(`${BASE_URL}/users`, {
     cache: "no-store",
   });
 
@@ -30,7 +32,7 @@ export async function getUsers(): Promise<User[]> {
 }
 
 export async function blockUser(id: string) {
-  const response = await fetch(`${BASE_URL}/users/${id}/block`, {
+  const response = await authFetch(`${BASE_URL}/users/${id}/block`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -50,7 +52,7 @@ export async function blockUser(id: string) {
 }
 
 export async function unblockUser(id: string) {
-  const response = await fetch(`${BASE_URL}/users/${id}/unblock`, {
+  const response = await authFetch(`${BASE_URL}/users/${id}/unblock`, {
     method: "PATCH",
   });
 
