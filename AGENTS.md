@@ -1,86 +1,107 @@
-<!-- BEGIN:nextjs-agent-rules -->
-
-## This is NOT the Next.js you know
-
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
-
-This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
-
-<!-- END:nextjs-agent-rules -->
-
 # SalonBook
 
-Single Next.js 16 app at repo root; use npm (`package-lock.json`). App Router in `src/app`, `@/*` → `src/*`. A separate Express API (not in this repo) is expected at `http://localhost:8000` unless `NEXT_PUBLIC_API_BASE_URL` overrides it.
+SalonBook is a salon service booking platform that allows customers to explore salon services, book appointments, and manage their bookings. It also provides a dashboard for managing services, appointments, and users.
 
-## Commands
+## Features
 
-- `npm run dev` (Turbopack, `http://localhost:3000`), `npm run build` (also typechecks), `npm start`.
-- `npx tsc --noEmit` passes on the current tree.
-- `npm run lint` is currently **red baseline**: `react-hooks/set-state-in-effect` in `src/components/ui/carousel.tsx` and `src/app/dashboard/admin/customers/page.tsx`; unused imports in that customers page, `src/app/services/services-browser.tsx`, `src/app/signin/page.tsx`, and `src/app/lib/appointments.ts` (`authFetch`). Use `npx eslint <paths>` for focused verification.
-- No test runner, test script, or CI workflow. Do not invent one unless asked.
+- User authentication and authorization
+- Browse available salon services
+- View service details
+- Book salon appointments
+- Manage and cancel pending appointments
+- Customer dashboard
+- Admin dashboard
+- Appointment and payment status management
+- Role-based access control
 
-## Verification gotchas
+## Technology Stack
 
-- ESLint enforces `react-hooks/set-state-in-effect`: do not call `setState` synchronously in a `useEffect` body, including through a helper called there. Use promise callbacks or a keyed child component instead.
-- Base UI `<Button render={<Link ... />}>` needs `nativeButton={false}`; otherwise it logs an a11y warning and drops native button semantics.
-- `next build` warns about missing Google OAuth env vars locally; that is expected because they are absent from `.env`.
+### Client
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- Shadcn UI
+- Better Auth
 
-## Next.js 16 notes
+### Server
+- Node.js
+- Express.js
+- MongoDB
+- TypeScript / JavaScript
+- JWT Authentication
 
-- Read the version-matched guide in `node_modules/next/dist/docs/` before using framework APIs; this version differs from older Next.js conventions.
-- Turbopack is default for dev and build; Tailwind v4 is wired via the `@tailwindcss/turbopack` rule in `next.config.ts`. There is no PostCSS config and no `tailwind.config.*`.
-- `reactCompiler: true` is enabled in `next.config.ts`.
-- Route props use generated helpers, e.g. `LayoutProps<"/">` in `src/app/layout.tsx`. Prefer generated `PageProps`/`RouteContext` types.
-- If request middleware is needed, use `proxy.ts` (not `middleware.ts`). `cookies()`, `headers()`, and route `params` are async. `next lint` no longer exists.
+## Installation Instructions
 
-## UI and styling
+Clone the client and server repositories separately.
 
-- shadcn uses `base-nova` style on Base UI (`@base-ui/react`), not Radix. Add primitives with `npx shadcn add <component>`; generated primitives stay in `src/components/ui/`.
-- `cn` comes from the `cn` package (`import { cn } from "cn"`); `src/lib/utils.ts` only re-exports it. Do not swap in `clsx`/`tailwind-merge`.
-- Tailwind is CSS-first (v4): theme tokens live in `src/app/globals.css`, which imports `shadcn/tailwind.css` (keep it).
-- Sonner's `<Toaster>` is mounted in `src/app/layout.tsx`; use `toast` from `sonner` for feedback.
-- App components (e.g. `Navbar.tsx`, `Banner.tsx`) use hardcoded green/cream hex colors rather than theme tokens; match that style when editing them.
+### 1. Clone Client Repository
 
-## Auth
+```bash
+git clone <CLIENT_REPOSITORY_URL>
+cd <CLIENT_PROJECT_FOLDER>
+pnpm install
+```
 
-- Better Auth + MongoDB adapter. Server config `src/lib/auth.ts` (DB name hardcoded to `salonbook`); handler `src/app/api/auth/[...all]/route.ts`; client `src/lib/auth-client.ts`.
-- Client code uses `authClient` from `src/lib/auth-client.ts` (it has `inferAdditionalFields<typeof auth>()`); `signIn`/`signUp`/`useSession` come from that same client. Keep server `auth` imports type-only in client files.
-- `.env` is gitignored and holds live credentials: never print or commit values. Keys in use: `MONGODB_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `NEXT_PUBLIC_API_BASE_URL`. `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` is present but no code reads it. `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` are missing.
-- `role` is the only additional user field (`input: true`, default `"customer"`). There is no `phoneNumber` field: `authClient.updateUser({ phoneNumber })` is a TypeScript error and won't persist; don't add it client-side.
-- Signup sends `admin` or `customer` from the client, so admin self-signup is a development shortcut — enforce real authorization server-side before relying on it.
+### 2. Clone Server Repository
 
-## Data sources (easy to get wrong)
+```bash
+git clone <SERVER_REPOSITORY_URL>
+cd <SERVER_PROJECT_FOLDER>
+pnpm install
+```
 
-- `src/lib/` is server-only infra: `mongodb.ts` (`getDb()` → `salonbook`), `auth.ts`, `stripe.ts`, `payments.ts`. `src/app/lib/api/*` and `src/app/lib/appointments.ts` are client-side fetchers for the external Express API.
-- `src/app/api/services/*` uses local MongoDB, **not** the external API. Services exist in both places; don't assume they are the same store.
-- The external appointments API returns **all** bookings, not just the caller's. Every "my appointments" view must filter by `session.user.id` or case-insensitive email. Payment routes instead read the local `appointments` collection by ObjectId.
-- Customer overview counts are computed from filtered appointments. `getCustomerDashboardStats()` (`GET /customer-stats`) returns site-wide totals and is not used by the overview. Admin overview uses `GET /api/admin/dashboard/stats`.
+## Run the Project Locally
 
-## Routes
+### Start the Server
 
-- Implemented pages: `/`, `/services`, `/services/[id]`, `/browser`, `/signin`, `/signup`, `/dashboard/admin`, `/dashboard/admin/overview`, `/dashboard/admin/add_book`, `/dashboard/admin/services`, `/dashboard/admin/appointments`, `/dashboard/admin/customers`, `/dashboard/admin/transactions`, `/dashboard/admin/profile`, `/dashboard/customer`, `/dashboard/customer/overview`, `/dashboard/customer/appointments`, `/dashboard/customer/appointments/[id]/payment`, `/dashboard/customer/profile`.
-- `/browser` is a one-line re-export alias of `/services` (kept because home-page links use it). `ServicesBrowser` reads `?category=<display name>` via `useSearchParams()` to pre-select the filter; the route is dynamic (`connection()`), so no Suspense boundary is needed.
-- Role entry routes are one-line re-export shims: `/dashboard/admin` → `./overview/page`, `/dashboard/customer` → `./overview/page`, and both role profile routes → `@/app/dashboard/profile/page`. Edit the target, not the shim.
-- `src/app/components/DashboardSidebar.tsx` picks its menu from the URL prefix (`/dashboard/admin/*` → admin, else customer), not from session role. Every sidebar link currently has a page; keep it that way.
-- Navbar sends admins to `/dashboard/admin` and everyone else to `/dashboard/customer`.
-- Real signup route is `/signup`; `Banner.tsx` links to stale `/sign-up`. Do not create a duplicate route.
-- Payment `success` verifies the Stripe session and records a paid checkout; `cancel` shows a retry link. Stripe redirects land on these pages.
+```bash
+cd <SERVER_PROJECT_FOLDER>
+pnpm install
+pnpm run dev
+```
 
-## Appointments
+### Start the Client
 
-- Status strings are exactly `"Pending"`, `"Confirmed"`, `"Cancelled"` (capitalized). Equality checks are case-sensitive; only the style helpers lowercase. Same for `paymentStatus`: `"Paid"` / `"Unpaid"`.
-- All status changes PATCH `${BASE_URL}/appointments/:id` on the external API with no auth header (`updateAppointmentStatus()` in `src/app/lib/appointments.ts`). Admin can confirm/cancel Pending or Confirmed; customers can cancel only Pending (button gated in `/dashboard/customer/appointments`).
+```bash
+cd <CLIENT_PROJECT_FOLDER>
+pnpm install
+pnpm run dev
+```
 
-## Services
+Open the following URL in your browser:
 
-- Types in `src/lib/services.ts`; shared validation in `src/lib/service-validation.ts`.
-- `GET /api/services` returns active services publicly and all services to admins. `POST /api/services` creates; `PATCH`/`DELETE /api/services/[id]` update/remove. All writes are admin-only.
-- Admin list `/dashboard/admin/services` edits via `/dashboard/admin/add_book?edit=<id>`, reusing the same `ServiceForm`.
-- Public `/services` queries only `status: "active"` services, so deactivated services cannot be browsed or booked.
+```text
+http://localhost:3000
+```
 
-## Payments
+## Environment Variables
 
-- Stripe Checkout is server-side; `src/lib/stripe.ts` throws at import if `STRIPE_SECRET_KEY` is missing. Webhook secret is optional: without it `POST /api/webhooks/stripe` returns `ignored: true`.
-- `POST /api/checkout_sessions` creates the session and stores `paymentSessionId` on the appointment; `POST /api/payments/sync` asks Stripe to confirm it. Both and the webhook call `recordPaidCheckoutSession()` in `src/lib/payments.ts`.
-- `recordPaidCheckoutSession()` is idempotent: upserts `transactions` by `stripeSessionId` and sets the appointment's `paymentStatus` to `Paid`. Keep it that way.
-- Checkout price comes from the local `services` document at request time, converted to cents; currency is hardcoded `usd`.
+Create `.env` files in both client and server projects.
+
+### Client Environment Variables
+
+```env
+NEXT_PUBLIC_API_BASE_URL=
+BETTER_AUTH_SECRET=
+BETTER_AUTH_URL=
+```
+
+### Server Environment Variables
+
+```env
+PORT=
+MONGODB_URL=
+CLIENT_URL=
+```
+
+**Note:** Never commit `.env` files or expose secret values publicly.
+
+## Live Website
+
+- Live Website: <LIVE_WEBSITE_URL>
+
+## Repository Links
+
+- Client Repository: <CLIENT_REPOSITORY_URL>
+- Server Repository: <SERVER_REPOSITORY_URL>
